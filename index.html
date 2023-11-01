@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COCOMO Modal Calculation</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .modal-dialog {
+      max-width: 80%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">COCOMO Modal Calculation</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cocomoModal">
+      Open COCOMO Modal
+    </button>
+
+    <!-- COCOMO Modal -->
+    <div class="modal fade" id="cocomoModal" tabindex="-1" aria-labelledby="cocomoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cocomoModalLabel">COCOMO Modal Calculation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="linesOfCode" class="form-label">Lines of Code</label>
+                <input type="number" class="form-control" id="linesOfCode" required>
+              </div>
+              <div class="mb-3">
+                <label for="languageType" class="form-label">Select Language Type</label>
+                <select class="form-select" id="languageType" required>
+                  <option value="organic">Organic</option>
+                  <option value="semi-detached">Semi-Detached</option>
+                  <option value="embedded">Embedded</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="effort">Effort (Person-Months)</label>
+                <input type="text" class="form-control" id="effort" readonly>
+              </div>
+              <div class="mb-3">
+                <label for="developmentTime">Development Time (Months)</label>
+                <input type="text" class="form-control" id="developmentTime" readonly>
+              </div>
+              <div class="mb-3">
+                <label for="staffing">Staffing (Persons)</label>
+                <input type="text" class="form-control" id="staffing" readonly>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="calculateCocomo()">Calculate</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function calculateCocomo() {
+      var linesOfCode = document.getElementById('linesOfCode').value;
+      var languageType = document.getElementById('languageType').value;
+
+      var organicFactors = {
+        'a': 2.4,
+        'b': 1.05,
+        'c': 2.5,
+        'd': 0.38
+      };
+
+      var semiDetachedFactors = {
+        'a': 3.0,
+        'b': 1.12,
+        'c': 2.5,
+        'd': 0.35
+      };
+
+      var embeddedFactors = {
+        'a': 3.6,
+        'b': 1.20,
+        'c': 2.5,
+        'd': 0.32
+      };
+
+      var selectedFactors;
+      if (languageType === 'organic') {
+        selectedFactors = organicFactors;
+      } else if (languageType === 'semi-detached') {
+        selectedFactors = semiDetachedFactors;
+      } else {
+        selectedFactors = embeddedFactors;
+      }
+
+      var effort = selectedFactors['a'] * Math.pow(linesOfCode / 1000, selectedFactors['b']);
+      var developmentTime = selectedFactors['c'] * Math.pow(effort, selectedFactors['d']);
+      var staffing = effort / developmentTime;
+
+      document.getElementById('effort').value = effort.toFixed(2);
+      document.getElementById('developmentTime').value = developmentTime.toFixed(2);
+      document.getElementById('staffing').value = staffing.toFixed(2);
+    }
+  </script>
+</body>
+
+</html>
